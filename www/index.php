@@ -336,10 +336,54 @@
             <div class="panel panel-default">
                <div class="panel-heading">
                   <h2 class="panel-title">
-                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">System</a>
+                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Motion Settings</a>
                   </h2>
                </div>
                <div id="collapseTwo" class="panel-collapse collapse">
+                  <div class="panel-body">
+                     <table class="settingsTable">
+                        <tr>
+                        <tr>
+                           <td>Noise level (1-255):</td>
+                           <td>
+                              <?php makeInput('motion_noise', 5); ?><input type="button" value="OK" onclick="send_cmd('mn ' + document.getElementById('motion_noise').value)">
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>Threshold (1-32000):</td>
+                           <td>
+                              <?php makeInput('motion_threshold', 5); ?><input type="button" value="OK" onclick="send_cmd('mt ' + document.getElementById('motion_threshold').value)">
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>Mask Image:</td>
+                           <td>
+                              <?php makeInput('motion_image', 30); ?><input type="button" value="OK" onclick="send_cmd('mi ' + document.getElementById('motion_image').value)">
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>Change Frames to start:</td>
+                           <td>
+                              <?php makeInput('motion_startframes', 5); ?><input type="button" value="OK" onclick="send_cmd('mb ' + document.getElementById('motion_startframes').value)">
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>Still Frames to stop:</td>
+                           <td>
+                              <?php makeInput('motion_stopframes', 5); ?><input type="button" value="OK" onclick="send_cmd('me ' + document.getElementById('motion_stopframes').value)">
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                  <h2 class="panel-title">
+                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">System</a>
+                  </h2>
+               </div>
+               <div id="collapseThree" class="panel-collapse collapse">
                   <div class="panel-body">
                      <input id="toggle_stream" type="button" class="btn btn-primary" value="<?php echo $streamButton; ?>" onclick="set_stream_mode(this.value);">
                      <input id="shutdown_button" type="button" value="shutdown system" onclick="sys_shutdown();" class="btn btn-danger">

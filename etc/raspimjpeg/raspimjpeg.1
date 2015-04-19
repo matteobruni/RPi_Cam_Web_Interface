@@ -76,6 +76,17 @@ image_quality 85
 tl_interval 30
 
 #
+# Motion Detection
+#
+vector_mode ?
+motion_noise 20
+motion_threshold 100
+motion_image ?
+motion_startframes 5
+motion_stopframes 5
+motion_pipe /var/www/FIFO1
+
+#
 # File Locations
 #
 # preview path: add %d for number
