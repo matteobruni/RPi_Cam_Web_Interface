@@ -19,6 +19,7 @@
    $options_ab = array('Off' => '0', 'On' => '1');
    $options_vs = array('Off' => '0', 'On' => '1');
    $options_rl = array('Off' => '0', 'On' => '1');
+   $options_vp = array('Off' => '0', 'On' => '1');
 
    function initCamPos() {
       $tr = fopen("pipan_bak.txt", "r");
@@ -343,6 +344,11 @@
                   <div class="panel-body">
                      <table class="settingsTable">
                         <tr>
+                          <td>Motion Vector Preview:</td>
+                          <td>
+                            <select onchange="send_cmd('vp ' + this.value)"><?php makeOptions($options_vp, 'vector_preview'); ?></select>
+                          </td>
+                        </tr>
                         <tr>
                            <td>Noise level (1-255):</td>
                            <td>
