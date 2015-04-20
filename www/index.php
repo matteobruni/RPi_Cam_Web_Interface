@@ -293,7 +293,13 @@
                         <tr>
                            <td>Image quality (0...100), default 85:</td>
                            <td>
-                              <?php makeInput('quality', 4); ?><input type="button" value="OK" onclick="send_cmd('qu ' + document.getElementById('quality').value)">
+                              <?php makeInput('image_quality', 4); ?><input type="button" value="OK" onclick="send_cmd('qu ' + document.getElementById('image_quality').value)">
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>Preview quality (0...100), default 25:</td>
+                           <td>
+                              <?php makeInput('quality', 4); ?><input type="button" value="OK" onclick="send_cmd('qp ' + document.getElementById('quality').value)">
                            </td>
                         </tr>
                         <tr>
