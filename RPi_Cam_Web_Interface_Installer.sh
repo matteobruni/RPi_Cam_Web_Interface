@@ -70,7 +70,7 @@ case "$1" in
   install)
         sudo killall raspimjpeg
         git pull origin master
-        sudo apt-get install -y apache2 php5 libapache2-mod-php5 gpac motion zip
+        sudo apt-get install -y apache2 php5 libapache2-mod-php5 gpac zip
 
         sudo mkdir -p /var/www/$rpicamdir/media
         sudo cp -r www/* /var/www/$rpicamdir/
@@ -135,21 +135,13 @@ case "$1" in
         sudo cp -r etc/rc_local_run/rc.local /etc/
         sudo chmod 755 /etc/rc.local
 
-        if [ "$rpicamdir" == "" ]; then
-          cat etc/motion/motion.conf.1 > etc/motion/motion.conf
-        else
-          sed -e "s/www/www\/$rpicamdir/" etc/motion/motion.conf.1 > etc/motion/motion.conf
-        fi
-        sudo cp -r etc/motion/motion.conf /etc/motion/
-        sudo chmod 640 /etc/motion/motion.conf
-
         echo "Installer finished"
         ;;
 
   update)
         sudo killall raspimjpeg
         git pull origin master
-        sudo apt-get install -y zip
+        sudo apt-get install -y apache2 php5 libapache2-mod-php5 gpac zip
 
         sudo cp -r bin/raspimjpeg /opt/vc/bin/
         sudo chmod 755 /opt/vc/bin/raspimjpeg
