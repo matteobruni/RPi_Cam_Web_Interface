@@ -42,7 +42,7 @@ case "$1" in
 
   remove)
         sudo killall raspimjpeg
-        sudo apt-get remove -y apache2 php5 libapache2-mod-php5 gpac motion zip
+        sudo apt-get remove -y apache2 php5 libapache2-mod-php5 gpac zip
         sudo apt-get autoremove -y
 
         sudo rm -r /var/www/$rpicamdir/*
@@ -174,7 +174,6 @@ case "$1" in
   stop)
         sudo killall raspimjpeg
         sudo killall php
-        sudo killall motion
         echo "Stopped"
         ;;
 
