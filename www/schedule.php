@@ -14,7 +14,7 @@
    define('LBL_COLUMNS', 'Period;Motion Start;Motion Stop;Period Start');
    define('LBL_PARAMETERS', 'Parameter;Value');
    define('LBL_DAYMODES', 'Sun based;All Day;Fixed Times');
-   define('LBL_PURGESPACEMODES', 'Off;Min Space GB or %;Max Usage GB or %');
+   define('LBL_PURGESPACEMODES', 'Off;Min Space %;Max Usage %;Min Space GB;Max Usage GB');
    define('LBL_DAWN', 'Dawn');
    define('LBL_DAY', 'Day');
    define('LBL_DUSK', 'Dusk');
@@ -48,7 +48,7 @@
    define('SCHEDULE_PURGEVIDEOHOURS', 'PurgeVideo_Hours');
    define('SCHEDULE_PURGEIMAGEHOURS', 'PurgeImage_Hours');
    define('SCHEDULE_PURGELAPSEHOURS', 'PurgeLapse_Hours');
-   define('SCHEDULE_PURGESPACEMODE', 'PurgeSpace_Mode');
+   define('SCHEDULE_PURGESPACEMODE', 'PurgeSpace_ModeEx');
    define('SCHEDULE_PURGESPACELEVEL', 'PurgeSpace_Level');
    define('SCHEDULE_COMMANDSON', 'Commands_On');
    define('SCHEDULE_COMMANDSOFF', 'Commands_Off');
@@ -401,6 +401,7 @@ function cmdHelp() {
              echo "<tr><td>rs</td><td>1</td><td>Reset user config to default</td></tr>";
              echo "<tr><td>ru</td><td>0/1</td><td>0/1 halt/restart RaspiMJPEG and release camera</td></tr>";
              echo "<tr><td>sc</td><td>1</td><td>Rescan for video and image indexes</td></tr>";
+             echo "<tr><td>sy</td><td>macro</td><td>Execute macro</td></tr>";
            echo "</table>";
          echo "</div>";
        echo "</div>";
@@ -555,11 +556,11 @@ function cmdHelp() {
       $lapseHours = $schedulePars[SCHEDULE_PURGELAPSEHOURS];
       $purgeCount = 0;
       if ($videoHours > 0 || $imageHours > 0 || $lapseHours > 0) {
-         $files = scandir(MEDIA_PATH);
+         $files = scandir(BASE_DIR . '/' . MEDIA_PATH);
          $currentHours = time() / 3600;
          foreach($files as $file) {
-            if(($file != '.') && ($file != '..') && (substr($file, -7) == '.th.jpg')) {
-               $fType = substr($file,-12, 1);
+            if(($file != '.') && ($file != '..') && isThumbnail($file)) {
+               $fType = getFileType($file);
                $purgeHours = 0;
                switch ($fType) {
                   case 'i': $purgeHours = $imageHours;
@@ -570,7 +571,7 @@ function cmdHelp() {
                      break;
                }
                if ($purgeHours > 0) {
-                  $fModHours = filemtime(MEDIA_PATH . "/$file") / 3600;
+                  $fModHours = filemtime(BASE_DIR . '/' . MEDIA_PATH . "/$file") / 3600;
                   if ($fModHours > 0 && ($currentHours - $fModHours) > $purgeHours) {
                      deleteFile($file);
                      $purgeCount++;
@@ -582,15 +583,20 @@ function cmdHelp() {
       }
       if ($schedulePars[SCHEDULE_PURGESPACEMODE] > 0) {
          $totalSize = disk_total_space(BASE_DIR . '/' . MEDIA_PATH) / 1024; //KB
-         $level =  str_replace('%', '', $schedulePars[SCHEDULE_PURGESPACELEVEL]);
-         if (strlen($level) < strlen($schedulePars[SCHEDULE_PURGESPACELEVEL])) {
-            //percentage
-            $level = min(max($schedulePars[SCHEDULE_PURGESPACELEVEL], 3), 97) * $totalSize / 100;
-         } else {
-            $level = str_replace(array('G','B', 'g','b'), '', $level) * 1048576.0;
+         $level =  str_replace(array('%','G','B', 'g','b'), '', $schedulePars[SCHEDULE_PURGESPACELEVEL]);
+         switch ($schedulePars[SCHEDULE_PURGESPACEMODE]) {
+            case 1:
+            case 2:
+               $level = min(max($schedulePars[SCHEDULE_PURGESPACELEVEL], 3), 97) * $totalSize / 100;
+               break;
+            case 3:
+            case 4:
+               $level = $level * 1048576.0;
+               break;
          }
          switch ($schedulePars[SCHEDULE_PURGESPACEMODE]) {
             case 1: //Free Space
+            case 3:
                $currentAvailable = disk_free_space(BASE_DIR . '/' . MEDIA_PATH) / 1024; //KB
                //writeLog(" free space purge total $totalSize current: $currentAvailable target: $level");
                if ($currentAvailable < $level) {
@@ -603,6 +609,7 @@ function cmdHelp() {
                //writeLog("Finished. Current now: $currentAvailable");
                break;
             case 2: // Max usage
+            case 4:
                $pFiles = getSortedFiles(false); //files in latest to earliest order
                //writeLog(" Max space purge max: $level");
                foreach ($pFiles as $pFile) {
@@ -709,8 +716,8 @@ function cmdHelp() {
                   purgeFiles();
                   $cmd = $schedulePars[SCHEDULE_MANAGEMENTCOMMAND];
                   if ($cmd != '') {
-                     writeLog("exec: $cmd");
-                     exec($cmd);
+                     writeLog("exec_macro: $cmd");
+                     sendCmds("sy $cmd");
                   }
                }
             }

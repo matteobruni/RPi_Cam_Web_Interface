@@ -12,7 +12,7 @@
    $options_ce_en = array('Disabled' => '0', 'Enabled' => '1');
    $options_ro = array('No rotate' => '0', 'Rotate_90' => '90', 'Rotate_180' => '180', 'Rotate_270' => '270');
    $options_fl = array('None' => '0', 'Horizontal' => '1', 'Vertical' => '2', 'Both' => '3');
-   $options_bo = array('Off' => '0', 'InLine' => '1', 'Background' => '2');
+   $options_bo = array('Off' => '0', 'Background' => '2');
    $options_av = array('V2' => '2', 'V3' => '3');
    $options_at_en = array('Disabled' => '0', 'Enabled' => '1');
    $options_ac_en = array('Disabled' => '0', 'Enabled' => '1');
@@ -101,6 +101,13 @@
                $value = $config[$selKey] / 10;
             } else {
                $value = 3;
+            }
+            break;
+         case 'watchdog_interval':
+            if (array_key_exists($selKey, $config)) {
+               $value = $config[$selKey] / 10;
+            } else {
+               $value = 0;
             }
             break;
          default: $value = $config[$selKey]; break;
@@ -340,6 +347,12 @@
                               <input type="button" value="OK" onclick="set_ac();">
                            </td>
                            </tr>
+                        <tr>
+                           <td>Watchdog, default interval 3s, errors 3</td>
+                           <td>Interval <?php makeInput('watchdog_interval', 3); ?>s&nbsp;&nbsp;&nbsp;&nbsp;Errors <?php makeInput('watchdog_errors', 3); ?>
+                           <input type="button" value="OK" onclick="send_cmd('wd ' + 10 * document.getElementById('watchdog_interval').value + ' ' + document.getElementById('watchdog_errors').value)">
+                           </td>
+                        </tr>
                      </table>
                   </div>
                </div>

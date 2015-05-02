@@ -37,12 +37,11 @@
 # Default upstream behaviour: rpicamdir="" (installs in /var/www/)
 rpicamdir=""
 
-
 case "$1" in
 
   remove)
         sudo killall raspimjpeg
-        sudo apt-get remove -y apache2 php5 libapache2-mod-php5 gpac zip
+        sudo apt-get remove -y apache2 php5 libapache2-mod-php5 gpac motion zip
         sudo apt-get autoremove -y
 
         sudo rm -r /var/www/$rpicamdir/*
@@ -70,7 +69,7 @@ case "$1" in
   install)
         sudo killall raspimjpeg
         git pull origin master
-        sudo apt-get install -y apache2 php5 libapache2-mod-php5 gpac zip
+        sudo apt-get install -y apache2 php5 libapache2-mod-php5 gpac motion zip
 
         sudo mkdir -p /var/www/$rpicamdir/media
         sudo cp -r www/* /var/www/$rpicamdir/
@@ -135,13 +134,23 @@ case "$1" in
         sudo cp -r etc/rc_local_run/rc.local /etc/
         sudo chmod 755 /etc/rc.local
 
+        if [ "$rpicamdir" == "" ]; then
+          cat etc/motion/motion.conf.1 > etc/motion/motion.conf
+        else
+          sed -e "s/www/www\/$rpicamdir/" etc/motion/motion.conf.1 > etc/motion/motion.conf
+        fi
+        sudo cp -r etc/motion/motion.conf /etc/motion/
+        sudo chmod 640 /etc/motion/motion.conf
+        
+        sudo usermod -a -G video www-data
+
         echo "Installer finished"
         ;;
 
   update)
         sudo killall raspimjpeg
         git pull origin master
-        sudo apt-get install -y apache2 php5 libapache2-mod-php5 gpac zip
+        sudo apt-get install -y zip
 
         sudo cp -r bin/raspimjpeg /opt/vc/bin/
         sudo chmod 755 /opt/vc/bin/raspimjpeg
@@ -158,22 +167,27 @@ case "$1" in
   start)
         ./$0 stop
         sudo mkdir -p /dev/shm/mjpeg
-        sleep 1;sudo raspimjpeg > /dev/null &
-        sleep 1;sudo -u www-data php /var/www/schedule.php > /dev/null &
+        sudo chown www-data:www-data /dev/shm/mjpeg
+        sudo chmod 777 /dev/shm/mjpeg
+        sleep 1;sudo su -c 'raspimjpeg > /dev/null &' www-data
+        sleep 1;sudo su -c 'php /var/www/schedule.php > /dev/null &' www-data
         echo "Started"
         ;;
 
   debug)
         ./$0 stop
         sudo mkdir -p /dev/shm/mjpeg
-        sleep 1;sudo raspimjpeg &
-        sleep 1;sudo -u www-data php /var/www/schedule.php &
+        sudo chown www-data:www-data /dev/shm/mjpeg
+        sudo chmod 777 /dev/shm/mjpeg
+        sleep 1;sudo su -c 'raspimjpeg &' www-data
+        sleep 1;sudo sudo su -c 'php /var/www/schedule.php &' www-data
         echo "Started with debug"
         ;;
 
   stop)
         sudo killall raspimjpeg
         sudo killall php
+        sudo killall motion
         echo "Stopped"
         ;;
 
