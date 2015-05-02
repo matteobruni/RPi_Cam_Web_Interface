@@ -6,7 +6,7 @@
    $debugString = "";
    
    $options_mm = array('Average' => 'average', 'Spot' => 'spot', 'Backlit' => 'backlit', 'Matrix' => 'matrix');
-   $options_em = array('Off' => 'off', 'Auto' => 'auto', 'Night' => 'night', 'Nightpreview' => 'nightpreview', 'Backlight' => 'backlight', 'Spotlight' => 'spotlight', 'Sports' => 'sport', 'Snow' => 'snow', 'Beach' => 'beach', 'Verylong' => 'verylong', 'Fixedfps' => 'fixedfps');
+   $options_em = array('Off' => 'off', 'Auto' => 'auto', 'Night' => 'night', 'Nightpreview' => 'nightpreview', 'Backlight' => 'backlight', 'Spotlight' => 'spotlight', 'Sports' => 'sports', 'Snow' => 'snow', 'Beach' => 'beach', 'Verylong' => 'verylong', 'Fixedfps' => 'fixedfps');
    $options_wb = array('Off' => 'off', 'Auto' => 'auto', 'Sun' => 'sun', 'Cloudy' => 'cloudy', 'Shade' => 'shade', 'Tungsten' => 'tungsten', 'Fluorescent' => 'fluorescent', 'Incandescent' => 'incandescent', 'Flash' => 'flash', 'Horizon' => 'horizon');
    $options_ie = array('None' => 'none', 'Negative' => 'negative', 'Solarise' => 'solarise', 'Sketch' => 'sketch', 'Denoise' => 'denoise', 'Emboss' => 'emboss', 'Oilpaint' => 'oilpaint', 'Hatch' => 'hatch', 'Gpen' => 'gpen', 'Pastel' => 'pastel', 'Watercolour' => 'watercolour', 'Film' => 'film', 'Blur' => 'blur', 'Saturation' => 'saturation', 'Colourswap' => 'colourswap', 'Washedout' => 'washedout', 'Posterise' => 'posterise', 'Colourpoint' => 'colourpoint', 'ColourBalance' => 'colourbalance', 'Cartoon' => 'cartoon');
    $options_ce_en = array('Disabled' => '0', 'Enabled' => '1');
@@ -137,6 +137,8 @@
    $config = readConfig($config, CONFIG_FILE2);
    $video_fps = $config['video_fps'];
    $divider = $config['divider'];
+   $width = $config['width'];
+   
    ?>
 <html>
    <head>
@@ -158,7 +160,7 @@
       </div>
       <input id="toggle_display" type="button" class="btn btn-primary" value="<?php echo $toggleButton; ?>" style="position:absolute;top:60px;right:10px;" onclick="set_display(this.value);">
       <div class="container-fluid text-center liveimage">
-         <div><img id="mjpeg_dest" <?php if(file_exists("pipan_on")) echo "ontouchstart=\"pipan_start()\""; ?> onclick="toggle_fullscreen(this);" src="/loading.jpg"></div>
+         <div><img id="mjpeg_dest" style="width:<?php echo $width;?>px;" <?php if(file_exists("pipan_on")) echo "ontouchstart=\"pipan_start()\""; ?> onclick="toggle_fullscreen(this);" src="/loading.jpg"></div>
          <div id="main-buttons" <?php echo $displayStyle; ?> >
             <input id="video_button" type="button" class="btn btn-primary">
             <input id="image_button" type="button" class="btn btn-primary">
@@ -170,6 +172,8 @@
       <div id="secondary-buttons" class="container-fluid text-center" <?php echo $displayStyle; ?> >
          <?php  if (file_exists("pipan_on")) pipan_controls(); ?>
          <a href="preview.php" class="btn btn-default">Download Videos and Images</a>
+         &nbsp;&nbsp;
+         <a href="motion.php" class="btn btn-default">Edit motion settings</a>
          &nbsp;&nbsp;
          <a href="schedule.php" class="btn btn-default">Edit schedule settings</a>
       </div>
