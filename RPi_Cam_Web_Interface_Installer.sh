@@ -133,14 +133,6 @@ case "$1" in
         sudo cp -r /etc/rc.local /etc/rc.local.bak
         sudo cp -r etc/rc_local_run/rc.local /etc/
         sudo chmod 755 /etc/rc.local
-
-        if [ "$rpicamdir" == "" ]; then
-          cat etc/motion/motion.conf.1 > etc/motion/motion.conf
-        else
-          sed -e "s/www/www\/$rpicamdir/" etc/motion/motion.conf.1 > etc/motion/motion.conf
-        fi
-        sudo cp -r etc/motion/motion.conf /etc/motion/
-        sudo chmod 640 /etc/motion/motion.conf
         
         sudo usermod -a -G video www-data
         if [ -e /var/www/$rpicamdir/uconfig ]; then
