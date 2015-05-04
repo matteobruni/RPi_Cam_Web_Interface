@@ -367,7 +367,7 @@
                         <tr>
                           <td>Motion Vector Preview:</td>
                           <td>
-                            <select onchange="send_cmd('vp ' + this.value)"><?php makeOptions($options_vp, 'vector_preview'); ?></select>
+                            <select onchange="send_cmd('vp ' + this.value)" id="preview_select"><?php makeOptions($options_vp, 'vector_preview'); ?></select>
                           </td>
                         </tr>
                         <tr>
